@@ -1,0 +1,99 @@
+#include<iostream>
+#include<map>
+#include<climits>
+#include<queue>
+using namespace std;
+
+bool isvalid(int a,int b,int m,int n)
+{
+	if (a>=0 && a<=m && b>=0 && b<=n) return true;
+	return false;
+}
+
+int main()
+{
+    int t;
+    cin>>t;
+    while (t--) {
+	int m,n,d;
+	cin>>m>>n>>d;	
+	queue<pair<int,int> > q;
+	q.push(make_pair(0,0));
+	map<pair<int,int>,int> mp;
+	mp[make_pair(0,0)] = 0;
+	int res = INT_MAX;
+	vector<pair<int,int>>v(1000);
+	int sz=-1;
+	while (q.empty()==false)
+	{
+		pair<int,int> temp = q.front();
+		q.pop();
+		int a = temp.first , b = temp.second;
+		v[mp[temp]]={a,b};
+		cout<<a<<" "<<b<<" "<<mp[temp]<<"\n";
+		if ((a==d) || (b==d))
+		{
+		    res = min(res,mp[temp]);
+		    sz=max(sz,mp[temp]);
+		}
+		if (!isvalid(a,b,m,n))   continue;
+		if (mp.find(pair<int,int>(m,b))==mp.end())
+		{
+			pair<int,int> st = make_pair(m,b);
+			mp[st] = mp[temp] + 1;
+			q.push(st);
+		}
+		if (mp.find(pair<int,int>(a,n))==mp.end())
+		{
+			pair<int,int> st = make_pair(a,n);
+			mp[st] = mp[temp] + 1;
+			q.push(st);
+		}
+		if (mp.find(pair<int,int>(a,0))==mp.end())
+		{
+			pair<int,int> st = make_pair(a,0);
+			mp[st] = mp[temp] + 1;
+			q.push(st);
+		}
+		if (mp.find(pair<int,int>(0,b))==mp.end())
+		{
+			pair<int,int> st = make_pair(0,b);
+			mp[st] = mp[temp] + 1;
+			q.push(st);
+		}
+		if (a+b>=n && mp.find(pair<int,int>(a+b-n,n))==mp.end())   //  movin water from jug a to b until b gets full
+		{
+		    pair<int,int> st = make_pair(a+b-n,n);
+			mp[st] = mp[temp] + 1;
+			q.push(st);	
+		}
+		if (a+b<n && mp.find(pair<int,int>(0,a+b))==mp.end())   //  movin water from jug a to b until a gets 0
+		{
+		    pair<int,int> st = make_pair(0,a+b);
+			mp[st] = mp[temp] + 1;
+			q.push(st);	
+		}
+		if (a+b>=m && mp.find(pair<int,int>(m,a+b-m))==mp.end())
+		{
+		    pair<int,int> st = make_pair(m,a+b-m);
+			mp[st] = mp[temp] + 1;
+			q.push(st);	
+		}
+		if (a+b<m && mp.find(pair<int,int>(a+b,0))==mp.end())   
+		{
+		    pair<int,int> st = make_pair(a+b,0);
+			mp[st] = mp[temp] + 1;
+			q.push(st);	
+		}
+	}
+	if(res!=INT_MAX)
+	{
+	cout<<"steps\n";
+	for(int i=0;i<=sz;i++)
+	cout<<v[i].first<<" "<<v[i].second<<endl;
+	cout<<res<<"\n";
+    }
+    else cout<<-1;
+    }
+	return 0;
+}
